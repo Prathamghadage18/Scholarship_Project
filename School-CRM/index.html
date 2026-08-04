@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCRM - School Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .role-card:hover { transform: translateY(-2px); transition: all 0.3s ease; }
+        .feature-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stats-card { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .notice-card { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .attendance-card { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">EduCRM</h1>
+                        <p class="text-xs text-gray-500">School Management System</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <select id="roleSelector" class="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-lg font-medium">
+                            <option value="admin">👨‍💼 Admin View</option>
+                            <option value="principal">🏫 Principal View</option>
+                            <option value="teacher">👩‍🏫 Teacher View</option>
+                            <option value="parent">👨‍👩‍👧‍👦 Parent View</option>
+                        </select>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <span id="currentUser">John Smith</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Role Overview Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">School CRM Dashboard</h2>
+            <p class="text-gray-600 mb-6">Role-based access control with secure, efficient school management</p>
+            
+            <!-- Role Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="role-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-3">👨‍💼</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Admin</h3>
+                            <p class="text-sm text-gray-600">Full system control</p>
+                        </div>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ User management</li>
+                        <li>✓ Notice CRUD</li>
+                        <li>✓ System settings</li>
+                        <li>✓ All data access</li>
+                    </ul>
+                </div>
+
+                <div class="role-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-3">🏫</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Principal</h3>
+                            <p class="text-sm text-gray-600">School oversight</p>
+                        </div>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ View all roles</li>
+                        <li>✓ School-wide notices</li>
+                        <li>✓ Attendance stats</li>
+                        <li>✓ Grade summaries</li>
+                    </ul>
+                </div>
+
+                <div class="role-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-3">👩‍🏫</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Teacher</h3>
+                            <p class="text-sm text-gray-600">Class management</p>
+                        </div>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ Upload materials</li>
+                        <li>✓ Mark attendance</li>
+                        <li>✓ Enter grades</li>
+                        <li>✓ Class notices</li>
+                    </ul>
+                </div>
+
+                <div class="role-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-500">
+                    <div class="flex items-center mb-4">
+                        <div class="text-3xl mr-3">👨‍👩‍👧‍👦</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Parent</h3>
+                            <p class="text-sm text-gray-600">Child monitoring</p>
+                        </div>
+                    </div>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✓ Child's progress</li>
+                        <li>✓ Attendance view</li>
+                        <li>✓ Study materials</li>
+                        <li>✓ Notice acknowledgment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Dashboard Content -->
+        <div id="dashboardContent" class="fade-in">
+            <!-- Admin Dashboard (Default) -->
+            <div id="adminDashboard" class="dashboard-view">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Column - Stats & Quick Actions -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Stats Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="stats-card rounded-xl p-6 text-white">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-white/80">Total Students</p>
+                                        <p class="text-3xl font-bold">1,247</p>
+                                    </div>
+                                    <div class="text-4xl">👨‍🎓</div>
+                                </div>
+                            </div>
+                            <div class="feature-card rounded-xl p-6 text-white">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-white/80">Active Teachers</p>
+                                        <p class="text-3xl font-bold">89</p>
+                                    </div>
+                                    <div class="text-4xl">👩‍🏫</div>
+                                </div>
+                            </div>
+                            <div class="attendance-card rounded-xl p-6 text-white">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-white/80">Attendance Rate</p>
+                                        <p class="text-3xl font-bold">94.2%</p>
+                                    </div>
+                                    <div class="text-4xl">📊</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notice Management -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-semibold text-gray-900">Notice Management</h3>
+                                <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                                    + Create Notice
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Parent-Teacher Meeting Schedule</h4>
+                                        <p class="text-sm text-gray-600">Published to: All Parents • 2 hours ago</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-blue-600 hover:text-blue-800">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Holiday Announcement</h4>
+                                        <p class="text-sm text-gray-600">Published to: All Users • 1 day ago</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-blue-600 hover:text-blue-800">Edit</button>
+                                        <button class="text-red-600 hover:text-red-800">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Management -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-semibold text-gray-900">User Management</h3>
+                                <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                    + Add User
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="text-left p-3">Name</th>
+                                            <th class="text-left p-3">Role</th>
+                                            <th class="text-left p-3">Status</th>
+                                            <th class="text-left p-3">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-3">Sarah Johnson</td>
+                                            <td class="p-3"><span class="bg-purple-100 text-purple-800 px-2 py-1 rounded">Principal</span></td>
+                                            <td class="p-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">Active</span></td>
+                                            <td class="p-3">
+                                                <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                                <button class="text-red-600 hover:text-red-800">Disable</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-3">Mike Chen</td>
+                                            <td class="p-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">Teacher</span></td>
+                                            <td class="p-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded">Active</span></td>
+                                            <td class="p-3">
+                                                <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                                                <button class="text-red-600 hover:text-red-800">Disable</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Recent Activity -->
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                    <div>
+                                        <p class="text-sm text-gray-900">New parent registered</p>
+                                        <p class="text-xs text-gray-500">5 minutes ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                                    <div>
+                                        <p class="text-sm text-gray-900">Attendance marked for Class 10A</p>
+                                        <p class="text-xs text-gray-500">15 minutes ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                                    <div>
+                                        <p class="text-sm text-gray-900">Study material uploaded</p>
+                                        <p class="text-xs text-gray-500">1 hour ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">System Health</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Server Status</span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Online</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Database</span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Connected</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Last Backup</span>
+                                    <span class="text-xs text-gray-500">2 hours ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other role dashboards (hidden by default) -->
+            <div id="principalDashboard" class="dashboard-view hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="notice-card rounded-xl p-6 text-white">
+                            <h3 class="text-xl font-semibold mb-4">School Overview</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-white/80">Total Classes</p>
+                                    <p class="text-2xl font-bold">42</p>
+                                </div>
+                                <div>
+                                    <p class="text-white/80">Average Attendance</p>
+                                    <p class="text-2xl font-bold">94.2%</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Teacher Performance</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <span>Math Department</span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">Excellent</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <span>Science Department</span>
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">Good</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Recent Notices</h3>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-blue-50 rounded border-l-4 border-blue-500">
+                                    <h4 class="font-medium">Parent-Teacher Meeting</h4>
+                                    <p class="text-sm text-gray-600">Scheduled for next week</p>
+                                </div>
+                                <div class="p-3 bg-green-50 rounded border-l-4 border-green-500">
+                                    <h4 class="font-medium">Holiday Announcement</h4>
+                                    <p class="text-sm text-gray-600">School closed on Friday</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="teacherDashboard" class="dashboard-view hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">My Classes</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 border rounded-lg">
+                                    <h4 class="font-medium">Class 10A - Mathematics</h4>
+                                    <p class="text-sm text-gray-600">32 students • Room 201</p>
+                                    <div class="mt-2 flex space-x-2">
+                                        <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Mark Attendance</button>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">Upload Material</button>
+                                    </div>
+                                </div>
+                                <div class="p-4 border rounded-lg">
+                                    <h4 class="font-medium">Class 9B - Mathematics</h4>
+                                    <p class="text-sm text-gray-600">28 students • Room 105</p>
+                                    <div class="mt-2 flex space-x-2">
+                                        <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Mark Attendance</button>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">Upload Material</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Grade Entry</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="text-left p-3">Student</th>
+                                            <th class="text-left p-3">Test 1</th>
+                                            <th class="text-left p-3">Test 2</th>
+                                            <th class="text-left p-3">Assignment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-3">Alice Johnson</td>
+                                            <td class="p-3"><input type="number" class="w-16 p-1 border rounded" value="85"></td>
+                                            <td class="p-3"><input type="number" class="w-16 p-1 border rounded" value="92"></td>
+                                            <td class="p-3"><input type="number" class="w-16 p-1 border rounded" value="88"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-3">Bob Smith</td>
+                                            <td class="p-3"><input type="number" class="w-16 p-1 border rounded" value="78"></td>
+                                            <td class="p-3"><input type="number" class="w-16 p-1 border rounded" value="84"></td>
+                                            <td class="p-3"><input type="number" class="w-16 p-1 border rounded" value="90"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg">Save Grades</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="attendance-card rounded-xl p-6 text-white">
+                            <h3 class="text-lg font-semibold mb-2">Today's Attendance</h3>
+                            <p class="text-3xl font-bold">94%</p>
+                            <p class="text-white/80 text-sm">56/60 students present</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                            <div class="space-y-2">
+                                <button class="w-full bg-blue-600 text-white p-3 rounded-lg text-left">📋 Mark Attendance</button>
+                                <button class="w-full bg-green-600 text-white p-3 rounded-lg text-left">📚 Upload Study Material</button>
+                                <button class="w-full bg-purple-600 text-white p-3 rounded-lg text-left">📝 Enter Grades</button>
+                                <button class="w-full bg-orange-600 text-white p-3 rounded-lg text-left">📢 Send Class Notice</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="parentDashboard" class="dashboard-view hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Emma's Progress</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-blue-600">92%</div>
+                                    <div class="text-sm text-gray-600">Attendance</div>
+                                </div>
+                                <div class="text-center p-4 bg-green-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-green-600">A-</div>
+                                    <div class="text-sm text-gray-600">Average Grade</div>
+                                </div>
+                                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-purple-600">5</div>
+                                    <div class="text-sm text-gray-600">Subjects</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Recent Grades</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <div>
+                                        <span class="font-medium">Mathematics Test</span>
+                                        <p class="text-sm text-gray-600">Dec 15, 2024</p>
+                                    </div>
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded font-medium">88/100</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <div>
+                                        <span class="font-medium">Science Assignment</span>
+                                        <p class="text-sm text-gray-600">Dec 12, 2024</p>
+                                    </div>
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded font-medium">92/100</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <div>
+                                        <span class="font-medium">English Essay</span>
+                                        <p class="text-sm text-gray-600">Dec 10, 2024</p>
+                                    </div>
+                                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded font-medium">85/100</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Study Materials</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="text-2xl">📄</div>
+                                        <div>
+                                            <span class="font-medium">Chapter 5 - Algebra Notes</span>
+                                            <p class="text-sm text-gray-600">Mathematics • Uploaded 2 days ago</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Download</button>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="text-2xl">🔬</div>
+                                        <div>
+                                            <span class="font-medium">Lab Experiment Guide</span>
+                                            <p class="text-sm text-gray-600">Science • Uploaded 1 week ago</p>
+                                        </div>
+                                    </div>
+                                    <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Download</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">School Notices</h3>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-blue-50 rounded border-l-4 border-blue-500">
+                                    <h4 class="font-medium text-sm">Parent-Teacher Meeting</h4>
+                                    <p class="text-xs text-gray-600">Dec 20, 2024 • 2:00 PM</p>
+                                    <button class="mt-2 text-blue-600 text-xs">Mark as Read</button>
+                                </div>
+                                <div class="p-3 bg-green-50 rounded border-l-4 border-green-500">
+                                    <h4 class="font-medium text-sm">Holiday Notice</h4>
+                                    <p class="text-xs text-gray-600">School closed Dec 25-26</p>
+                                    <button class="mt-2 text-green-600 text-xs">Mark as Read</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                            <div class="space-y-2">
+                                <button class="w-full bg-blue-600 text-white p-3 rounded-lg text-left text-sm">📊 View Full Report</button>
+                                <button class="w-full bg-green-600 text-white p-3 rounded-lg text-left text-sm">📧 Contact Teacher</button>
+                                <button class="w-full bg-purple-600 text-white p-3 rounded-lg text-left text-sm">📅 View Schedule</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Attendance This Week</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span>Monday</span>
+                                    <span class="text-green-600">✓ Present</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Tuesday</span>
+                                    <span class="text-green-600">✓ Present</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Wednesday</span>
+                                    <span class="text-red-600">✗ Absent</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Thursday</span>
+                                    <span class="text-green-600">✓ Present</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Friday</span>
+                                    <span class="text-green-600">✓ Present</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Specifications -->
+        <div class="mt-12 bg-white rounded-xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Technical Specifications</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="text-4xl mb-2">⚡</div>
+                    <h3 class="font-semibold text-gray-900">Performance</h3>
+                    <p class="text-sm text-gray-600">API response < 500ms<br>Paginated views</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-2">🔒</div>
+                    <h3 class="font-semibold text-gray-900">Security</h3>
+                    <p class="text-sm text-gray-600">JWT auth, RBAC<br>Input validation</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-2">📱</div>
+                    <h3 class="font-semibold text-gray-900">Responsive</h3>
+                    <p class="text-sm text-gray-600">Mobile-first design<br>WCAG AA compliant</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl mb-2">🚀</div>
+                    <h3 class="font-semibold text-gray-900">MERN Stack</h3>
+                    <p class="text-sm text-gray-600">MongoDB, Express<br>React, Node.js</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- MVP Timeline -->
+        <div class="mt-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
+            <h2 class="text-2xl font-bold mb-6">2-Week MVP Timeline</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Week 1: Core Foundation</h3>
+                    <ul class="space-y-2 text-white/90">
+                        <li>✓ User authentication & RBAC</li>
+                        <li>✓ Database schema & models</li>
+                        <li>✓ Basic dashboard layouts</li>
+                        <li>✓ Notice management system</li>
+                        <li>✓ User management (Admin)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Week 2: Features & Polish</h3>
+                    <ul class="space-y-2 text-white/90">
+                        <li>✓ Attendance tracking</li>
+                        <li>✓ Grade entry & progress</li>
+                        <li>✓ Study materials upload</li>
+                        <li>✓ Parent portal views</li>
+                        <li>✓ Testing & deployment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Role switching functionality
+        const roleSelector = document.getElementById('roleSelector');
+        const currentUser = document.getElementById('currentUser');
+        const dashboards = {
+            admin: document.getElementById('adminDashboard'),
+            principal: document.getElementById('principalDashboard'),
+            teacher: document.getElementById('teacherDashboard'),
+            parent: document.getElementById('parentDashboard')
+        };
+
+        const userNames = {
+            admin: 'John Smith (Admin)',
+            principal: 'Sarah Johnson (Principal)',
+            teacher: 'Mike Chen (Teacher)',
+            parent: 'Lisa Williams (Parent)'
+        };
+
+        roleSelector.addEventListener('change', function() {
+            const selectedRole = this.value;
+            
+            // Hide all dashboards
+            Object.values(dashboards).forEach(dashboard => {
+                dashboard.classList.add('hidden');
+            });
+            
+            // Show selected dashboard
+            dashboards[selectedRole].classList.remove('hidden');
+            dashboards[selectedRole].classList.add('fade-in');
+            
+            // Update current user name
+            currentUser.textContent = userNames[selectedRole];
+        });
+
+        // Add some interactive functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('button')) {
+                // Add click feedback for buttons
+                e.target.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    e.target.style.transform = 'scale(1)';
+                }, 100);
+            }
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const activityItems = document.querySelectorAll('#adminDashboard .space-y-4 > div');
+            if (activityItems.length > 0) {
+                const randomItem = activityItems[Math.floor(Math.random() * activityItems.length)];
+                randomItem.style.backgroundColor = '#f3f4f6';
+                setTimeout(() => {
+                    randomItem.style.backgroundColor = '';
+                }, 1000);
+            }
+        }, 5000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'976b790cd7bd47cb',t:'MTc1NjQ2NDQ3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
